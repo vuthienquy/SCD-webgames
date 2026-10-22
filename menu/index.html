@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090b12">
+<title>Game Library — SCD GAMES</title>
+<link rel="stylesheet" href="../shared/styles/tokens.css">
+<link rel="stylesheet" href="../shared/styles/base.css">
+<link rel="stylesheet" href="../shared/background/background.css">
+<link rel="stylesheet" href="../shared/settings.css">
+<link rel="stylesheet" href="./menu.css">
+<script src="../shared/i18n/translations.js"></script>
+<script src="../shared/i18n/language.js"></script>
+
+<script>
+window.getSCDLanguage = () => window.SCDLanguage.getLanguage();
+window.scdText = key => window.SCDLanguage.text("menu", key);
+</script>
+</head>
+<body class="menu-page" data-background="menu">
+<div class="ambient"></div><canvas id="background" aria-hidden="true"></canvas><div class="grain"></div>
+<header class="topbar">
+<a class="brand" href="../index.html"><span class="brand-mark">S</span><span>SCD GAMES</span></a>
+<div class="nav-right"><span class="nav-label">INTELLIGENCE ARENA</span><a class="home-link" href="../index.html"><span aria-hidden="true">←</span> BACK HOME</a></div>
+</header>
+<main class="container">
+<section class="intro"><div class="eyebrow"><span class="live-dot"></span> THE INTELLIGENCE ARENA</div><h1>Choose your <span>game.</span></h1><p class="intro-description">Every move matters. Every decision counts. Enter the arena and discover how far your mind can go.</p></section>
+<section aria-labelledby="games-heading">
+<div class="section-heading"><h2 id="games-heading">GAME LIBRARY</h2><span class="section-count" id="game-count">LOADING GAMES</span></div>
+<div id="game-grid" class="game-grid"><p class="game-description">Loading games...</p></div>
+<aside class="development-note"><div class="note-icon" aria-hidden="true">✦</div><p class="note-text"><strong>The arena is expanding.</strong> SCD Outsmart is currently in development. More games can be added to this library as the project grows.</p></aside>
+</section>
+<footer><span class="footer-brand">SCD GAMES</span><span>THINK DEEPER · PLAY SMARTER · STAY AHEAD</span></footer>
+</main>
+<script src="./games.js"></script>
+<script>
+(() => {
+    const grid = document.getElementById("game-grid");
+    const count = document.getElementById("game-count");
+    if (!grid || !count) return;
+
+    let gamesCache = [];
+    let ready = false;
+    let requestVersion = 0;
+
+    function renderGames() {
+        if (!ready) return;
+        const lang = window.getSCDLanguage();
+        const text = window.scdText;
+        const fragment = document.createDocumentFragment();
+
+        for (const game of gamesCache) {
+            if (game.error) {
+                const warning = document.createElement("p");
+                warning.className = "game-description";
+                warning.textContent = `${game.name}: ${text("gameInfoError")}`;
+                fragment.append(warning);
+                continue;
+            }
+
+            const title = game.data.getAttribute(`data-name-${lang}`) || game.data.dataset.name || game.name;
+            const origin = game.data.getAttribute(`data-origin-${lang}`) || game.data.dataset.origin || "Unknown";
+            const description = game.data.getAttribute(`data-description-${lang}`) || game.data.dataset.description || "";
+
+            const card = document.createElement("article");
+            card.className = "featured-card";
+
+            const content = document.createElement("div");
+            content.className = "featured-content";
+            const category = document.createElement("span");
+            category.className = "game-category";
+            category.textContent = origin.toUpperCase();
+
+            const heading = document.createElement("h2");
+            heading.className = "game-title";
+            heading.textContent = title;
+
+            const summary = document.createElement("p");
+            summary.className = "game-description";
+            summary.textContent = description;
+
+            const action = document.createElement("a");
+            action.className = "game-action";
+            action.href = game.path;
+            action.textContent = text("play");
+
+            content.append(category, heading, summary, action);
+
+            const art = document.createElement("div");
+            art.className = "game-art";
+            if (game.illustration) {
+                art.innerHTML = game.illustration;
+                art.setAttribute("aria-label", `${title} illustration`);
+            } else {
+                art.textContent = title;
+            }
+            card.append(content, art);
+            fragment.append(card);
+        }
+
+        grid.replaceChildren(fragment);
+        if (gamesCache.length === 0) grid.textContent = text("noGames");
+
+        const total = gamesCache.filter(game => !game.error).length;
+        const suffix = total === 1 ? text("titlesSuffix") : text("titlesSuffixPlural");
+        count.textContent = `${total} ${suffix}`;
+    }
+
+    async function initializeGames() {
+        const version = ++requestVersion;
+        grid.textContent = window.scdText("loadingGames");
+        count.textContent = window.scdText("loadingCount");
+
+        if (!Array.isArray(window.games) && !Array.isArray(games)) {
+            grid.textContent = window.scdText("loadError");
+            return;
+        }
+
+        const list = Array.isArray(window.games) ? window.games : games;
+        const uniqueNames = [...new Set(list)];
+        gamesCache = await Promise.all(uniqueNames.map(async name => {
+            try {
+                const response = await fetch(`./${name}.html`);
+                if (!response.ok) throw new Error(`Could not load ./${name}.html`);
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const data = doc.querySelector(".game-data");
+                if (!data) throw new Error(`Missing .game-data in ${name}.html`);
+                return {
+                    name,
+                    data,
+                    path: data.dataset.game || "",
+                    illustration: doc.querySelector(".game-illustration")?.innerHTML || "",
+                    error: false
+                };
+            } catch (error) {
+                console.error(`Failed to load game "${name}":`, error);
+                return {name, error: true};
+            }
+        }));
+
+        if (version !== requestVersion) return;
+        ready = true;
+        renderGames();
+    }
+
+    window.addEventListener("scd-language-change", renderGames);
+    initializeGames();
+})();
+</script>
+<script>
+function translateMenu() {
+    const text = window.scdText;
+    document.documentElement.lang = window.getSCDLanguage();
+
+    const nav = document.querySelector(".nav-label");
+    if (nav) nav.textContent = text("navLabel");
+
+    const home = document.querySelector(".home-link");
+    if (home) home.innerHTML = '<span aria-hidden="true">←</span> ' + text("backHome");
+
+    const eyebrow = document.querySelector(".eyebrow");
+    if (eyebrow) eyebrow.innerHTML = '<span class="live-dot"></span>' + text("eyebrow");
+
+    const heading = document.querySelector(".intro h1");
+    if (heading) heading.innerHTML = text("headingStart") + '<span>' + text("headingEnd") + '</span>';
+
+    const description = document.querySelector(".intro-description");
+    if (description) description.textContent = text("description");
+
+    const library = document.getElementById("games-heading");
+    if (library) library.textContent = text("library");
+
+    const note = document.querySelector(".development-note .note-text");
+    if (note) note.innerHTML = '<strong>' + text("expanding") + '</strong> ' + text("development");
+
+    const footer = document.querySelector("footer .footer-brand + span");
+    if (footer) footer.textContent = text("footer");
+}
+translateMenu();
+window.addEventListener("scd-language-change", translateMenu);
+</script>
+<script type="module" src="../shared/background/effect-neuron.js"></script>
+<script src="../shared/settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+
+/* SETTINGS BUTTON */
+.settings-button {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 14px;
+    border: 1px solid rgba(180,162,255,.35);
+    border-radius: 7px;
+    color: #e9e3ff;
+    background: rgba(19,18,34,.72);
+    backdrop-filter: blur(14px);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: .2s ease;
+}
+
+.settings-button:hover {
+    border-color: rgba(207,194,255,.8);
+    background: rgba(130,105,255,.18);
+    transform: translateY(-2px);
+}
+
+.settings-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+.settings-button .settings-icon {
+    display: block;
+    flex: 0 0 17px;
+    width: 17px;
+    height: 17px;
+}
+
+.settings-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(3,4,10,.72);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+}
+
+.settings-overlay.is-open {
+    display: flex;
+}
+
+.settings-panel {
+    width: min(100%, 420px);
+    padding: 25px;
+    border: 1px solid rgba(179,160,255,.28);
+    border-radius: 12px;
+    background: linear-gradient(
+        145deg,
+        rgba(29,25,49,.98),
+        rgba(12,13,24,.98)
+    );
+    box-shadow:
+        0 25px 90px rgba(0,0,0,.45),
+        0 0 45px rgba(130,105,255,.08);
+    text-align: left;
+}
+
+.settings-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.settings-heading h2 {
+    margin: 0;
+    color: #f4f1ff;
+    font-size: 15px;
+    letter-spacing: 2.5px;
+}
+
+.settings-close {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid rgba(179,160,255,.2);
+    border-radius: 6px;
+    color: #c8bdff;
+    background: rgba(255,255,255,.03);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.settings-label {
+    display: block;
+    margin-bottom: 12px;
+    color: #a5a5bd;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.language-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.language-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 110px;
+    padding: 15px 10px;
+    border: 1px solid rgba(179,160,255,.18);
+    border-radius: 8px;
+    color: #e9e3ff;
+    background: rgba(255,255,255,.025);
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.language-option:hover {
+    border-color: rgba(179,160,255,.55);
+    background: rgba(145,119,255,.08);
+}
+
+.language-option[aria-pressed="true"] {
+    border-color: #a393ff;
+    background: rgba(145,119,255,.14);
+    box-shadow: inset 0 0 0 1px rgba(163,147,255,.18);
+}
+
+.language-option svg {
+    display: block;
+    width: 54px;
+    height: 36px;
+    border-radius: 3px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+
+.language-option span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.settings-hint {
+    margin: 18px 0 0;
+    color: #a5a5bd;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .settings-button {
+        top: 14px;
+        right: 14px;
+        padding: 9px 11px;
+    }
+
+    .settings-button .settings-word {
+        display: none;
+    }
+
+    .settings-panel {
+        padding: 20px;
+    }
+}
+
+/* Chỉ áp dụng cho trang menu */
+.menu-page #scd-settings-root {
+    display: contents;
+}
+
+.menu-page .settings-button {
+    position: static;
+    top: auto;
+    right: auto;
+}

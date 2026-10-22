@@ -1,0 +1,10 @@
+/* Shared SCD GAMES design tokens. */
+:root {
+    --bg: #090b12;
+    --text: #f4f1ff;
+    --muted: #a5a5bd;
+    --purple: #a393ff;
+    --purple-light: #c8bdff;
+    --border: rgba(179, 160, 255, .19);
+    --font-ui: Inter, "Segoe UI", Arial, sans-serif;
+}

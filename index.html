@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b12">
+<title>SCD GAMES</title>
+<link rel="stylesheet" href="./shared/styles/tokens.css">
+<link rel="stylesheet" href="./shared/styles/base.css">
+<link rel="stylesheet" href="./shared/background/background.css">
+<link rel="stylesheet" href="./shared/settings.css">
+<link rel="stylesheet" href="./styles/home.css">
+<script src="./shared/i18n/translations.js"></script>
+<script src="./shared/i18n/language.js"></script>
+
+</head>
+
+<body data-background="home">
+<div class="ambient"></div>
+<canvas id="background" aria-hidden="true"></canvas>
+<div class="grain"></div>
+
+<main>
+    <section class="hero">
+        <div class="eyebrow">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span data-i18n="eyebrow">THE INTELLIGENCE ARENA</span>
+        </div>
+
+        <h1>SCD GAMES</h1>
+
+        <p class="subtitle" data-i18n="subtitle">
+            Outsmart your opponent, become superior in intelligence.
+        </p>
+
+        <a class="start-button" href="menu/index.html">
+            <span data-i18n="start">START</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+    </section>
+
+    <footer class="bottom-note" data-i18n="footer">
+        THINK DEEPER · PLAY SMARTER · STAY AHEAD
+    </footer>
+</main>
+
+
+
+<script>
+(() => {
+    "use strict";
+
+    function applyHomeLanguage(language = window.SCDLanguage.getLanguage()) {
+        const selected = language === "vi" ? "vi" : "en";
+        document.documentElement.lang = selected;
+        window.SCDLanguage.translateElements(document, "home", "data-i18n", selected);
+    }
+
+    applyHomeLanguage();
+    window.addEventListener("scd-language-change", event => {
+        applyHomeLanguage(event.detail.language);
+    });
+})();
+</script>
+
+
+<script type="module" src="./shared/background/effect-neuron-heavy.js"></script>
+<script src="./shared/settings.js"></script>
+</body>
+</html>
